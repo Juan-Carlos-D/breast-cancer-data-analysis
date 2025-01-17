@@ -64,3 +64,15 @@ WHERE mean_attributes.radius_mean > 15 AND worst_attributes.texture_worst < 25;
 SELECT a.case_id AS case_id_1, b.case_id AS case_id_2, a.radius_mean, b.radius_mean
 FROM mean_attributes a
 INNER JOIN mean_attributes b ON a.radius_mean > b.radius_mean;
+
+# -- Window Function & Subquery
+SELECT 
+    cancer_cases.case_id,
+    diagnosis,
+    radius_mean,
+    texture_mean,
+    AVG(radius_mean) OVER (PARTITION BY diagnosis) AS avg_radius_by_diagnosis,
+    (SELECT MAX(radius_mean) FROM mean_attributes WHERE diagnosis = cancer_cases.diagnosis) AS max_radius_by_diagnosis
+FROM 
+    cancer_cases
+INNER JOIN mean_attributes ON cancer_cases.case_id = mean_attributes.case_id;
